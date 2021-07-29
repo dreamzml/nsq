@@ -52,6 +52,8 @@ func nsqadminFlagSet(opts *nsqadmin.Options) *flag.FlagSet {
 	flagSet.String("allow-config-from-cidr", opts.AllowConfigFromCIDR, "A CIDR from which to allow HTTP requests to the /config endpoint")
 	flagSet.String("acl-http-header", opts.AclHttpHeader, "HTTP header to check for authenticated admin users")
 
+	flagSet.String("mysql-config", opts.DbMysqlDsn, "mysql dns config")
+
 	nsqlookupdHTTPAddresses := app.StringArray{}
 	flagSet.Var(&nsqlookupdHTTPAddresses, "lookupd-http-address", "lookupd HTTP address (may be given multiple times)")
 	nsqdHTTPAddresses := app.StringArray{}

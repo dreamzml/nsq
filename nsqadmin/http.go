@@ -22,6 +22,7 @@ import (
 	"github.com/nsqio/nsq/internal/lg"
 	"github.com/nsqio/nsq/internal/protocol"
 	"github.com/nsqio/nsq/internal/version"
+	"github.com/nsqio/nsq/internal/dao"
 )
 
 func maybeWarnMsg(msgs []string) string {
@@ -66,6 +67,11 @@ func NewHTTPServer(nsqadmin *NSQAdmin) *httpServer {
 	router.PanicHandler = http_api.LogPanicHandler(nsqadmin.logf)
 	router.NotFound = http_api.LogNotFoundHandler(nsqadmin.logf)
 	router.MethodNotAllowed = http_api.LogMethodNotAllowedHandler(nsqadmin.logf)
+
+
+	//数据库连接
+	dao.Init(nsqadmin.getOpts().DbMysqlDsn)
+
 	s := &httpServer{
 		nsqadmin: nsqadmin,
 		router:   router,
@@ -88,6 +94,7 @@ func NewHTTPServer(nsqadmin *NSQAdmin) *httpServer {
 	router.Handle("GET", bp("/nodes/:node"), http_api.Decorate(s.indexHandler, log))
 	router.Handle("GET", bp("/counter"), http_api.Decorate(s.indexHandler, log))
 	router.Handle("GET", bp("/lookup"), http_api.Decorate(s.indexHandler, log))
+	router.Handle("GET", bp("/rest-channels"), http_api.Decorate(s.indexHandler, log))
 
 	router.Handle("GET", bp("/static/:asset"), http_api.Decorate(s.staticAssetHandler, log, http_api.PlainText))
 	router.Handle("GET", bp("/fonts/:asset"), http_api.Decorate(s.staticAssetHandler, log, http_api.PlainText))
@@ -113,6 +120,9 @@ func NewHTTPServer(nsqadmin *NSQAdmin) *httpServer {
 	router.Handle("GET", bp("/api/graphite"), http_api.Decorate(s.graphiteHandler, log, http_api.V1))
 	router.Handle("GET", bp("/config/:opt"), http_api.Decorate(s.doConfig, log, http_api.V1))
 	router.Handle("PUT", bp("/config/:opt"), http_api.Decorate(s.doConfig, log, http_api.V1))
+	router.Handle("GET", bp("/api/rest-channels"), http_api.Decorate(s.restChannelsHandler, log, http_api.V1))
+	router.Handle("POST", bp("/api/rest-channels"), http_api.Decorate(s.createRestChannelHandler, log, http_api.V1))
+	router.Handle("DELETE", bp("/api/rest-channels/:id"), http_api.Decorate(s.deleteRestChannelHandler, log, http_api.V1))
 
 	return s
 }

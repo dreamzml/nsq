@@ -15,6 +15,7 @@ var Router = Backbone.Router.extend({
         this.route(bp('/lookup'), 'lookup');
         this.route(bp('/nodes(/:node)'), 'nodes');
         this.route(bp('/counter'), 'counter');
+        this.route(bp('/rest-channels'), 'restChannels');
         // this.listenTo(this, 'route', function(route, params) {
         //     console.log('Route: %o; params: %o', route, params);
         // });
@@ -52,6 +53,10 @@ var Router = Backbone.Router.extend({
 
     counter: function() {
         Pubsub.trigger('counter:show');
+    },
+
+    restChannels: function() {
+        Pubsub.trigger('restChannels:show');
     }
 });
 

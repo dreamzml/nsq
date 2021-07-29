@@ -9,7 +9,9 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/snappy v0.0.1
+	github.com/jmoiron/sqlx v1.3.4
 	github.com/judwhite/go-svc v1.2.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mreiferson/go-options v1.0.0

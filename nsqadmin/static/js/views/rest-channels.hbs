@@ -1,0 +1,91 @@
+{{> warning}}
+{{> error}}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>RestChannels</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+    {{#if collection.length}}
+        <table class="table table-condensed table-bordered">
+            <tr>
+                <th>Topic</th>
+                <th>Channel</th>
+                <th>RestUrl</th>
+                <th>Menthod</th>
+                <th>CreateAt</th>
+                {{#if graph_active}}<th width="120">Depth</th>{{/if}}
+                {{#if graph_active}}<th width="120">Messages</th>{{/if}}
+                {{#if graph_active}}<th width="120">Rate</th>{{/if}}
+                <th>Operator</th>
+            </tr>
+            {{#each collection}}
+            <tr>
+                <td><a class="link" href="{{basePath "/rest-channel"}}/{{urlencode id}}">{{topic}}</a></td>
+                <td><a class="link" href="{{basePath "/rest-channel"}}/{{urlencode id}}">{{channel}}</a></td>
+                <td>{{rest_url}}</td>
+                <td>{{method}}</td>
+                <td>{{create_at}}</td>
+                {{#if ../graph_active}}<td><a class="link" href="{{basePath "/topics"}}/{{urlencode name}}"><img width="120" height="20" src="{{sparkline "topic" "" name "" "depth"}}"></a></td>{{/if}}
+                {{#if ../graph_active}}<td><a class="link" href="{{basePath "/topics"}}/{{urlencode name}}"><img width="120" height="20" src="{{sparkline "topic" "" name "" "message_count"}}"></a></td>{{/if}}
+                {{#if ../graph_active}}<td class="bold rate" target="{{rate "topic" "*" name ""}}"></td>{{/if}}
+                <td>
+                    <button class="btn-link red delete-link" data-id="{{id}}" data-topic="{{topic}}" style="padding: 0 6px; border: 0;">✘</button>
+                </td>
+            </tr>
+            {{/each}}
+        </table>
+    {{else}}
+        <div class="alert alert-warning"><h4>Notice</h4>No Topics Found</div>
+    {{/if}}
+    </div>
+</div>
+{{#if isAdmin}}
+<div class="row">
+    <div class="col-md-5">
+        <form class="rest-channel-form form-horizontal">
+            <legend>Create REST Topic/Channel</legend>
+            <div class="alert alert-info">
+                <p>This provides a way to setup a stream hierarchy
+                before services are deployed to production.
+                <p>If <em>Channel Name</em> is empty, just the topic is created.
+            </div>
+            <div class="form-group">
+                <label for="InputTopic" class="col-sm-2 control-label">Topic</label>
+                <div class="col-sm-5">
+                    <input name="topic" class="form-control" id="InputTopic" placeholder="Topic">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="InputChannel" class="col-sm-2 control-label">Channel</label>
+                <div class="col-sm-5">
+                    <input name="channel" class="form-control" id="InputChannel" placeholder="Channel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="InputMethod" class="col-sm-2 control-label">Method</label>
+                <div class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input type="radio" name="method" value="POST"> POST
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="radio" name="method" value="GET"> GET
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="InputRestUrl" class="col-sm-2 control-label">RestUrl</label>
+                <div class="col-sm-10">
+                    <input name="rest_url" class="form-control" id="InputRestUrl" placeholder="Push Url">
+                </div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-default" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+{{/if}}
