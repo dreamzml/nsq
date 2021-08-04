@@ -68,7 +68,6 @@ func NewHTTPServer(nsqadmin *NSQAdmin) *httpServer {
 	router.NotFound = http_api.LogNotFoundHandler(nsqadmin.logf)
 	router.MethodNotAllowed = http_api.LogMethodNotAllowedHandler(nsqadmin.logf)
 
-
 	//数据库连接
 	dao.Init(nsqadmin.getOpts().DbMysqlDsn)
 

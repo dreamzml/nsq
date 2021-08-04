@@ -19,6 +19,7 @@ type Options struct {
 
 	InactiveProducerTimeout time.Duration `flag:"inactive-producer-timeout"`
 	TombstoneLifetime       time.Duration `flag:"tombstone-lifetime"`
+	DbMysqlDsn   string `flag:"mysql-config"`
 }
 
 func NewOptions() *Options {
@@ -36,5 +37,6 @@ func NewOptions() *Options {
 
 		InactiveProducerTimeout: 300 * time.Second,
 		TombstoneLifetime:       45 * time.Second,
+		DbMysqlDsn:               "nsqdmin-api:teU4RqnGUn6atBgXyhwk8II8MfKRA5@tcp(10.32.5.113:3306)/nsq-admin?charset=utf8mb4&parseTime=true",
 	}
 }

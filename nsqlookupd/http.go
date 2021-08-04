@@ -10,6 +10,7 @@ import (
 	"github.com/nsqio/nsq/internal/http_api"
 	"github.com/nsqio/nsq/internal/protocol"
 	"github.com/nsqio/nsq/internal/version"
+	"github.com/nsqio/nsq/internal/dao"
 )
 
 type httpServer struct {
@@ -30,6 +31,9 @@ func newHTTPServer(l *NSQLookupd) *httpServer {
 		router:     router,
 	}
 
+	//数据库连接
+	dao.Init(l.opts.DbMysqlDsn)
+
 	router.Handle("GET", "/ping", http_api.Decorate(s.pingHandler, log, http_api.PlainText))
 	router.Handle("GET", "/info", http_api.Decorate(s.doInfo, log, http_api.V1))
 
@@ -39,6 +43,7 @@ func newHTTPServer(l *NSQLookupd) *httpServer {
 	router.Handle("GET", "/topics", http_api.Decorate(s.doTopics, log, http_api.V1))
 	router.Handle("GET", "/channels", http_api.Decorate(s.doChannels, log, http_api.V1))
 	router.Handle("GET", "/nodes", http_api.Decorate(s.doNodes, log, http_api.V1))
+	router.Handle("GET", "/rest-channels", http_api.Decorate(s.doRestChannels, log, http_api.V1))
 
 	// only v1
 	router.Handle("POST", "/topic/create", http_api.Decorate(s.doCreateTopic, log, http_api.V1))
