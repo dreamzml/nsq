@@ -18,3 +18,5 @@ require (
 	github.com/nsqio/go-diskqueue v1.0.0
 	github.com/nsqio/go-nsq v1.0.8
 )
+
+replace github.com/nsqio/nsq => ./
