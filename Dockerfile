@@ -5,6 +5,7 @@ COPY    .    /go/src/github.com/nsqio/nsq
 WORKDIR      /go/src/github.com/nsqio/nsq
 
 RUN export GO111MODULE=on \
+ && export GOPROXY=https://goproxy.cn,direct \
  && ./test.sh \
  && CGO_ENABLED=0 make DESTDIR=/opt PREFIX=/nsq BLDFLAGS='-ldflags="-s -w"' install
 
