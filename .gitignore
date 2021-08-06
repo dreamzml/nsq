@@ -51,3 +51,11 @@ profile
 # vim stuff
 *.sw[op]
 .vscode/launch.json
+apps/nsq_to_filebeat/go.mod
+apps/nsq_to_filebeat/go.sum
+apps/producer_test/go.mod
+apps/producer_test/go.sum
+apps/nsqlookupd/go.mod
+apps/nsqlookupd/go.sum
+apps/nsqadmin/go.mod
+apps/nsqadmin/go.sum
