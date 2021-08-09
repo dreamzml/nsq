@@ -6,11 +6,12 @@ import(
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 	"github.com/nsqio/nsq/internal/dao"
+	"github.com/nsqio/nsq/internal/clusterinfo"
 )
 
 func (s *httpServer) doRestChannels(w http.ResponseWriter, req *http.Request, ps httprouter.Params) (interface{}, error) {
 
-	var restChannels []restChannel
+	var restChannels []clusterinfo.RestChannel
 	queryArgsArr := map[string]interface{}{
 		"limit": "1000",
 		"offset": "0",
@@ -30,13 +31,4 @@ func (s *httpServer) doRestChannels(w http.ResponseWriter, req *http.Request, ps
 	return map[string]interface{}{
 		"rest_channels": restChannels,
 	}, nil
-}
-
-type restChannel struct{
-	ID int `db:"id"`
-	Topic string `db:"topic" json:"topic"`
-	Channel string `db:"channel" json:"channel"`
-	Method string `db:"method" json:"method"`
-	RestUrl string `db:"rest_url" json:"rest_url"`
-	CreateAt time.Time `db:"created_at" json:"created_at"`
 }

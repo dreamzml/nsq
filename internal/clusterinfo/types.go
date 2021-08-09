@@ -304,3 +304,13 @@ type ProducersByHost struct {
 func (c ProducersByHost) Less(i, j int) bool {
 	return c.Producers[i].Hostname < c.Producers[j].Hostname
 }
+
+
+type RestChannel struct{
+	ID int `db:"id"`
+	Topic string `db:"topic" json:"topic"`
+	Channel string `db:"channel" json:"channel"`
+	Method string `db:"method" json:"method"`
+	RestUrl string `db:"rest_url" json:"rest_url"`
+	CreateAt time.Time `db:"created_at" json:"created_at"`
+}

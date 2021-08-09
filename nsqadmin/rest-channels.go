@@ -18,7 +18,7 @@ type RestChannelsController struct {
 
 func (s *httpServer) restChannelsHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) (interface{}, error) {
 	var messages []string
-	var restChannels []restChannel
+	var restChannels []clusterinfo.RestChannel
 
 	queryArgsArr := map[string]interface{}{
 		"limit": "1000",
@@ -37,27 +37,15 @@ func (s *httpServer) restChannelsHandler(w http.ResponseWriter, req *http.Reques
 	}
 
 	return struct {
-		RestChannels  []restChannel `json:"restChannels"`
+		RestChannels  []clusterinfo.RestChannel `json:"restChannels"`
 		Message string   `json:"message"`
 	}{restChannels, maybeWarnMsg(messages)}, nil
 }
 
-
-type restChannel struct{
-	ID int `db:"id"`
-	Topic string `db:"topic" json:"topic"`
-	Channel string `db:"channel" json:"channel"`
-	Method string `db:"method" json:"method"`
-	RestUrl string `db:"rest_url" json:"rest_url"`
-	CreateAt time.Time `db:"created_at" json:"created_at"`
-}
-
-
-
 func (s *httpServer) createRestChannelHandler(w http.ResponseWriter, req *http.Request, ps httprouter.Params) (interface{}, error) {
 	var messages []string
 
-	var body restChannel
+	var body clusterinfo.RestChannel
 
 	if !s.isAuthorizedAdminRequest(req) {
 		return nil, http_api.Err{403, "FORBIDDEN"}
@@ -116,7 +104,7 @@ func (s *httpServer) deleteRestChannelHandler(w http.ResponseWriter, req *http.R
 		return nil, http_api.Err{403, "FORBIDDEN"}
 	}
 
-	var channel restChannel
+	var channel clusterinfo.RestChannel
 	id := ps.ByName("id")
 
 	if err := dao.MDB.Get(&channel, "SELECT id,topic,channel,method,rest_url,created_at FROM rest_channels WHERE id=? LIMIT 1;", id); err !=nil{
