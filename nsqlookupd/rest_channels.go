@@ -2,7 +2,6 @@ package nsqlookupd
 
 import(
 	"fmt"
-	"time"
 	"net/http"
 	"github.com/julienschmidt/httprouter"
 	"github.com/nsqio/nsq/internal/dao"
