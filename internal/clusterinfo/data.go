@@ -904,3 +904,56 @@ func (c *ClusterInfo) producersPOST(pl Producers, uri string, qs string) error {
 	}
 	return nil
 }
+
+
+
+// GetRestChannels returns a []RestChannel containing a union of all the topics
+// from all the given nsqlookupd
+func (c *ClusterInfo) GetRestChannels(lookupdHTTPAddrs []string) (topics map[string]*RestChannel, err error) {
+	var lock sync.Mutex
+	var wg sync.WaitGroup
+	var errs []error
+
+	topics = make(map[string]*RestChannel)
+	
+	type respType struct {
+		RestChannels []RestChannel `json:"rest_channels"`
+	}
+
+	for _, addr := range lookupdHTTPAddrs {
+		wg.Add(1)
+		go func(addr string) {
+			defer wg.Done()
+
+			endpoint := fmt.Sprintf("http://%s/rest-channels", addr)
+			c.logf("CI: querying nsqlookupd %s", endpoint)
+
+			var resp respType
+			err := c.client.GETV1(endpoint, &resp)
+			if err != nil {
+				lock.Lock()
+				errs = append(errs, err)
+				lock.Unlock()
+				return
+			}
+
+			lock.Lock()
+			defer lock.Unlock()
+			for _, rest := range resp.RestChannels{
+				key := fmt.Sprintf("%s-%s", rest.Topic, rest.Channel)
+				topics[key] = &rest
+			}
+		}(addr)
+	}
+	wg.Wait()
+
+	if len(errs) == len(lookupdHTTPAddrs) {
+		return nil, fmt.Errorf("Failed to query any nsqlookupd: %s", ErrList(errs))
+	}
+
+	if len(errs) > 0 {
+		return topics, ErrList(errs)
+	}
+
+	return topics, nil
+}
