@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"sync"
 	"time"
-	"fmt"
 	"reflect"
 	"github.com/nsqio/go-nsq"
 	"github.com/nsqio/nsq/internal/clusterinfo"
