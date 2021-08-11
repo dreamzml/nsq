@@ -76,7 +76,6 @@ func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.Rest
 //删除字符串数组中指定的元素
 func remove(list []reflect.Value, str string) ([]reflect.Value) {
 	for k,v := range list{
-	    fmt.Println(k, v.String())
 	    if v.String() == str{
 			return append(list[:k], (list[k+1:])...)
 	    }
