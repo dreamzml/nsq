@@ -38,13 +38,9 @@ func newTopicDiscoverer(logf lg.AppLogFunc, opts *Options, cfg *nsq.Config, hupC
 }
 
 func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.RestChannel) {
-
-	fmt.Println("restchannels len:", restChannels)
-	fmt.Println("restchannels len:", len(restChannels))
-
 	var oldKeys = reflect.ValueOf(t.rests).MapKeys()
-
 	for key, rest := range restChannels {
+		oldKeys = remove(oldKeys, key)
 		if _, ok := t.rests[key]; ok {
 			continue
 		}
@@ -60,8 +56,6 @@ func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.Rest
 			continue
 		}
 		t.rests[key] = fl
-		fmt.Println("oldKeys", oldKeys)
-		oldKeys = remove(oldKeys, key)
 
 		t.wg.Add(1)
 		go func(fl *RequestWorker) {
@@ -81,7 +75,6 @@ func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.Rest
 
 //删除字符串数组中指定的元素
 func remove(list []reflect.Value, str string) ([]reflect.Value) {
-	fmt.Println("remove", str, list)
 	for k,v := range list{
 	    fmt.Println(k, v.String())
 	    if v.String() == str{

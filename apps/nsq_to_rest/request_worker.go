@@ -40,6 +40,8 @@ func NewRequestWorker(logf lg.AppLogFunc, opts *Options, restChannel *clusterinf
 		return nil, err
 	}
 
+	logf(lg.INFO, "create new request workder: [%s/%s]", restChannel.Topic, restChannel.Channel)
+
 	f := &RequestWorker{
 		logf:           logf,
 		opts:           opts,
