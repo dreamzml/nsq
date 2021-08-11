@@ -59,3 +59,5 @@ apps/nsqlookupd/go.mod
 apps/nsqlookupd/go.sum
 apps/nsqadmin/go.mod
 apps/nsqadmin/go.sum
+apps/nsq_to_rest/go.mod
+apps/nsq_to_rest/go.sum
