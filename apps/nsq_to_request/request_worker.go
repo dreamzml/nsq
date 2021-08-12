@@ -126,6 +126,8 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 		// }
 	}
 	
+	req.Channel = f.restChannel.Channel
+	req.Topic = f.restChannel.Topic
 	req.MessageID = fmt.Sprintf("%s", m.ID)
 	req.Attempts = m.Attempts
 	messageBody, err := json.Marshal(req)
@@ -154,6 +156,8 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 type request struct{
 	MessageID string
 	Attempts  uint16
+	Topic string
+	Channel string
 	ApiUri string
 	Memthod string
 	MsgData string

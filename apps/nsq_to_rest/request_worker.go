@@ -94,6 +94,8 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 	var requestErr error
 
 	//time.Sleep(time.Duration(rand.Intn(2))*time.Second)
+	req.Channel = f.restChannel.Channel
+	req.Topic = f.restChannel.Topic
 	req.ApiUri = f.restChannel.RestUrl
 	req.Memthod = f.restChannel.Method
 	req.MsgData = string(m.Body)
@@ -140,6 +142,8 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 type request struct{
 	MessageID string
 	Attempts  uint16
+	Topic string
+	Channel string
 	ApiUri string
 	Memthod string
 	MsgData string
