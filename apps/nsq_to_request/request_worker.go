@@ -126,8 +126,8 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 		// }
 	}
 	
-	req.Channel = f.restChannel.Channel
-	req.Topic = f.restChannel.Topic
+	req.Channel = f.opts.Channel
+	req.Topic = f.topic
 	req.MessageID = fmt.Sprintf("%s", m.ID)
 	req.Attempts = m.Attempts
 	messageBody, err := json.Marshal(req)
