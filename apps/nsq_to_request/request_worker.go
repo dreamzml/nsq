@@ -169,8 +169,8 @@ type request struct{
 }
 
 
-func (p *RequestWorker) PublishPost(addr string, msg *url.Values) (code int, response string, err error) {
-	buf := strings.NewReader(msg.Encode())	
+func (p *RequestWorker) PublishPost(addr string, params *url.Values) (code int, response string, err error) {
+	buf := strings.NewReader(params.Encode())	
 	resp, err2 := HTTPPost(addr, buf)
 	if err2 != nil {
 		return code, response, err2
@@ -186,29 +186,15 @@ func (p *RequestWorker) PublishPost(addr string, msg *url.Values) (code int, res
 	return resp.StatusCode, string(respByte), err
 }
 
-func (p *RequestWorker) PublishGet(addr string, msg string) (code int, response string, err error)  {
-
+func (p *RequestWorker) PublishGet(addr string, params *url.Values) (code int, response string, err error)  {
+	var query string
 	endpoint := addr
-	if len(msg) > 0 {
-		if json.Valid([]byte(msg)){
-			paramsData := map[string]string{}
-			
-			json.Unmarshal([]byte(msg),&paramsData)
-			paramValue := url.Values{}
+	msg = params.Encode()
 
-			for key,value := range paramsData{
-				paramValue.Add(key,value)
-			}
-			msg = paramValue.Encode()
-		}else{
-			msg = url.QueryEscape(msg)
-		}
-
-		if strings.Contains(addr, "?"){
-			endpoint = fmt.Sprintf("%s&%s", addr, msg)
-		}else{
-			endpoint = fmt.Sprintf("%s?%s", addr, msg)
-		}
+	if strings.Contains(addr, "?"){
+		endpoint = fmt.Sprintf("%s&%s", addr, msg)
+	}else{
+		endpoint = fmt.Sprintf("%s?%s", addr, msg)
 	}
 	
 	resp, err2 := HTTPGet(endpoint)
