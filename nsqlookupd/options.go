@@ -37,6 +37,6 @@ func NewOptions() *Options {
 
 		InactiveProducerTimeout: 300 * time.Second,
 		TombstoneLifetime:       45 * time.Second,
-		DbMysqlDsn:               "nsqdmin-api:teU4RqnGUn6atBgXyhwk8II8MfKRA5@tcp(10.32.5.113:3306)/nsq-admin?charset=utf8mb4&parseTime=true",
+		DbMysqlDsn:               "",
 	}
 }
