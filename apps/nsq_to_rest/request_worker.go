@@ -9,7 +9,7 @@ import (
 	"strings"
 	"math/rand"
 	//"errors"
-	"bytes"
+	//"bytes"
 	"net/url"
 	"github.com/nsqio/go-nsq"
 	"github.com/nsqio/nsq/internal/lg"
@@ -103,7 +103,7 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 	f.logf(lg.INFO, "[%s/%s] request goto [%s]%s", f.restChannel.Topic, f.restChannel.Channel, f.restChannel.Method, f.restChannel.RestUrl)
 	
 	paramsData := map[string]string{}
-	if err = json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
+	if err := json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
 		req.JsonErr = err.Error()
 		req.JsonErrBody = string(req.MsgData)
 	}else{
