@@ -32,7 +32,7 @@ func newHTTPServer(l *NSQLookupd) *httpServer {
 	}
 
 	//数据库连接
-	dao.Init(l.opts.DbMysqlDsn)
+	dao.Init("mysql", l.opts.DbMysqlDsn)
 
 	router.Handle("GET", "/ping", http_api.Decorate(s.pingHandler, log, http_api.PlainText))
 	router.Handle("GET", "/info", http_api.Decorate(s.doInfo, log, http_api.V1))

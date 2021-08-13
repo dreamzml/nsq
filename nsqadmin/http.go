@@ -69,7 +69,7 @@ func NewHTTPServer(nsqadmin *NSQAdmin) *httpServer {
 	router.MethodNotAllowed = http_api.LogMethodNotAllowedHandler(nsqadmin.logf)
 
 	//数据库连接
-	dao.Init(nsqadmin.getOpts().DbMysqlDsn)
+	dao.Init("mysql", nsqadmin.getOpts().DbMysqlDsn)
 
 	s := &httpServer{
 		nsqadmin: nsqadmin,

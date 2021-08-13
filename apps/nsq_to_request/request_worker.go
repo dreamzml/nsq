@@ -100,19 +100,20 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 		req.JsonErrBody = string(m.Body)
 	}else{
 		f.logf(lg.INFO, "[%s/%s] request goto [%s]%s", f.topic, f.opts.Channel, req.Memthod, req.ApiUri)
-		if req.Memthod=="GET"{
-			req.ResponseCode, req.ResponseData, requestErr = f.PublishGet(req.ApiUri, req.MsgData)
-		} else if req.Memthod=="POST"{
-			paramsData := map[string]string{}
-			if err = json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
-				req.JsonErr = err.Error()
-				req.JsonErrBody = string(req.MsgData)
-			}else{
-				paramValue := url.Values{}
-				for key,value := range paramsData{
-					paramValue.Add(key,value)
-				}
+		
+		paramsData := map[string]string{}
+		if err = json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
+			req.JsonErr = err.Error()
+			req.JsonErrBody = string(req.MsgData)
+		}else{
+			paramValue := url.Values{}
+			for key,value := range paramsData{
+				paramValue.Add(key,value)
+			}
 
+			if req.Memthod=="GET"{
+				req.ResponseCode, req.ResponseData, requestErr = f.PublishGet(req.ApiUri, &paramValue)
+			} else if req.Memthod=="POST"{
 				req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(req.ApiUri, &paramValue)
 			}
 		
@@ -187,9 +188,8 @@ func (p *RequestWorker) PublishPost(addr string, params *url.Values) (code int, 
 }
 
 func (p *RequestWorker) PublishGet(addr string, params *url.Values) (code int, response string, err error)  {
-	var query string
 	endpoint := addr
-	msg = params.Encode()
+	msg := params.Encode()
 
 	if strings.Contains(addr, "?"){
 		endpoint = fmt.Sprintf("%s&%s", addr, msg)

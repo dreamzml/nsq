@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,14 +16,19 @@ var MDB *sqlx.DB
  *@Return
  *@Tips:
  */
-func Init(dsn string) (err error) {
-	MDB, err = sqlx.Connect("mysql", dsn)
+func Init(engine string, dsn string) (err error) {
+	if dsn == ""{
+		log.Printf("db init: %s, dns:%s", engine, dsn)
+		return
+	}
+
+	MDB, err = sqlx.Connect(engine, dsn)
 	if err != nil {
 		log.Fatal("connect MDB failed:", err.Error())
 		return
 	}
 
-	log.Printf("mysql-dns: %s", dsn)
+	log.Printf("db type: %s, dns:%s", engine, dsn)
 
 	// 设置最大连接数
 	MDB.SetMaxOpenConns(20)

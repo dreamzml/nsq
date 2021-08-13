@@ -58,6 +58,6 @@ func NewOptions() *Options {
 		AllowConfigFromCIDR:      "127.0.0.1/8",
 		AclHttpHeader:            "X-Forwarded-User",
 		AdminUsers:               []string{},
-		DbMysqlDsn:               "nsqdmin-api:teU4RqnGUn6atBgXyhwk8II8MfKRA5@tcp(10.32.5.113:3306)/nsq-admin?charset=utf8mb4&parseTime=true",
+		DbMysqlDsn:               "",
 	}
 }
