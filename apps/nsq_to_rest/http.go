@@ -34,12 +34,11 @@ func HTTPGet(endpoint string) (*http.Response, error) {
 	return httpclient.Do(req)
 }
 
-func HTTPPost(endpoint string, body io.Reader) (*http.Response, error) {
+func HTTPPost(endpoint string, contentType string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest("POST", endpoint, body)
 	if err != nil {
 		return nil, err
 	}
-	contentType := "application/x-www-form-urlencoded"
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Content-Type", contentType)
 	// for key, val := range validCustomHeaders {

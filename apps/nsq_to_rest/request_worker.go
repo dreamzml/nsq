@@ -97,6 +97,7 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 	req.Channel = f.restChannel.Channel
 	req.Topic = f.restChannel.Topic
 	req.ApiUri = f.restChannel.RestUrl
+	req.ContentType = f.restChannel.ContentType
 	req.Memthod = f.restChannel.Method
 	req.MsgData = string(m.Body)
 
@@ -126,7 +127,7 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 			// 	}
 			// 	req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, &paramValue)
 			// }
-			req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, &paramValue)
+			req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, f.restChannel.ContentType, &paramValue)
 		}
 
 		if requestErr != nil{
@@ -155,6 +156,7 @@ type request struct{
 	Attempts  uint16
 	Topic string
 	Channel string
+	ContentType string
 	ApiUri string
 	Memthod string
 	MsgData string
@@ -165,9 +167,9 @@ type request struct{
 	JsonErrBody string
 }
 
-func (p *RequestWorker) PublishPost(addr string, params *url.Values) (code int, response string, err error) {
+func (p *RequestWorker) PublishPost(addr string, contentType string, params *url.Values) (code int, response string, err error) {
 	buf := strings.NewReader(params.Encode())	
-	resp, err2 := HTTPPost(addr, buf)
+	resp, err2 := HTTPPost(addr, contentType, buf)
 	if err2 != nil {
 		return code, response, err2
 	}
