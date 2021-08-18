@@ -24,14 +24,14 @@
             </tr>
             {{#each collection}}
             <tr>
-                <td><a class="link" href="{{basePath "/rest-channel"}}/{{urlencode id}}">{{topic}}</a></td>
-                <td><a class="link" href="{{basePath "/rest-channel"}}/{{urlencode id}}">{{channel}}</a></td>
+                <td>{{topic}}</td>
+                <td>{{channel}}</td>
                 <td>{{rest_url}}</td>
                 <td>{{method}}</td>
                 <td>{{create_at}}</td>
                 {{#if ../graph_active}}<td><a class="link" href="{{large_graph "topic" "*" topic channel "depth"}}"><img width="120" height="20" src="{{sparkline "channel" "*" topic channel "depth"}}"></a></td>{{/if}}
                 {{#if ../graph_active}}<td><a class="link" href="{{large_graph "topic" "*" topic channel "message_count"}}"><img width="120" height="20" src="{{sparkline "channel" "*" topic channel "message_count"}}"></a></td>{{/if}}
-                {{#if ../graph_active}}<td class="bold rate" target="{{rate "topic" "*" topic ""}}"></td>{{/if}}
+                {{#if ../graph_active}}<td class="bold rate" target="{{rate "topic" "*" topic channel}}"></td>{{/if}}
                 <td>
                     <button class="btn-link red delete-link" data-id="{{id}}" data-topic="{{topic}}" style="padding: 0 6px; border: 0;">✘</button>
                 </td>
