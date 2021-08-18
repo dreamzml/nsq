@@ -940,7 +940,7 @@ func (c *ClusterInfo) GetRestChannels(lookupdHTTPAddrs []string) (topics map[str
 			lock.Lock()
 			defer lock.Unlock()
 			for _, rest := range resp.RestChannels{
-				key := fmt.Sprintf("%s-%s", rest.Topic, rest.Channel)
+				key := fmt.Sprintf("%d-%s-%s",rest.ID, rest.Topic, rest.Channel)
 				topics[key] = rest
 			}
 		}(addr)
