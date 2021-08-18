@@ -38,8 +38,8 @@ var RestChannelsView = BaseView.extend({
         var topic = $(e.target.form.elements['topic']).val();
         var channel = $(e.target.form.elements['channel']).val();
         var method = $(e.target.form.elements['method']).val();
-        var content_type = $(e.target.form.elements['content_type']).val();
-        var rest_url = $(e.target.form.elements['rest_url']).val();
+        var content_type = $(e.target.form.elements['content_type:checked']).val();
+        var rest_url = $(e.target.form.elements['rest_url:checked']).val();
         if (topic === '' || channel === '' || method === '' || rest_url === '') {
             return;
         }
