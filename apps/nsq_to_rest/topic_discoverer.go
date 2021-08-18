@@ -36,7 +36,7 @@ func newTopicDiscoverer(logf lg.AppLogFunc, opts *Options, cfg *nsq.Config, hupC
 	}
 }
 
-func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.RestChannel) {
+func (t *TopicDiscoverer) updateTopics(restChannels map[string]clusterinfo.RestChannel) {
 	var oldKeys = reflect.ValueOf(t.rests).MapKeys()
 	for key, rest := range restChannels {
 		oldKeys = remove(oldKeys, key)
@@ -48,8 +48,7 @@ func (t *TopicDiscoverer) updateTopics(restChannels map[string]*clusterinfo.Rest
 		// 	t.logf(lg.WARN, "skipping topic %s (doesn't match pattern %s)", topic, t.opts.TopicPattern)
 		// 	continue
 		// }
-
-		fl, err := NewRequestWorker(t.logf, t.opts, rest, t.cfg, t.ci)
+		fl, err := NewRequestWorker(t.logf, t.opts, &rest, t.cfg, t.ci)
 		if err != nil {
 			t.logf(lg.ERROR, "couldn't create NewRequestWorker for new topic %s: %s", key, err)
 			continue

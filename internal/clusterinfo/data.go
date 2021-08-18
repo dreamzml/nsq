@@ -909,12 +909,12 @@ func (c *ClusterInfo) producersPOST(pl Producers, uri string, qs string) error {
 
 // GetRestChannels returns a []RestChannel containing a union of all the topics
 // from all the given nsqlookupd
-func (c *ClusterInfo) GetRestChannels(lookupdHTTPAddrs []string) (topics map[string]*RestChannel, err error) {
+func (c *ClusterInfo) GetRestChannels(lookupdHTTPAddrs []string) (topics map[string]RestChannel, err error) {
 	var lock sync.Mutex
 	var wg sync.WaitGroup
 	var errs []error
 
-	topics = make(map[string]*RestChannel)
+	topics = make(map[string]RestChannel)
 	
 	type respType struct {
 		RestChannels []RestChannel `json:"rest_channels"`
@@ -941,7 +941,7 @@ func (c *ClusterInfo) GetRestChannels(lookupdHTTPAddrs []string) (topics map[str
 			defer lock.Unlock()
 			for _, rest := range resp.RestChannels{
 				key := fmt.Sprintf("%s-%s", rest.Topic, rest.Channel)
-				topics[key] = &rest
+				topics[key] = rest
 			}
 		}(addr)
 	}
