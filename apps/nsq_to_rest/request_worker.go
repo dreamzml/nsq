@@ -103,36 +103,29 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 
 	f.logf(lg.INFO, "[%s/%s] request goto [%s]%s", f.restChannel.Topic, f.restChannel.Channel, f.restChannel.Method, f.restChannel.RestUrl)
 	
-	paramsData := map[string]string{}
-	if err := json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
-		req.JsonErr = err.Error()
-		req.JsonErrBody = string(req.MsgData)
-	}else{
-		paramValue := url.Values{}
-		for key,value := range paramsData{
-			paramValue.Add(key,value)
-		}
-
-		if f.restChannel.Method=="GET"{
-			req.ResponseCode, req.ResponseData, requestErr = f.PublishGet(f.restChannel.RestUrl, &paramValue)
-		} else if f.restChannel.Method=="POST"{
-			// paramsData := map[string]string{}
-			// if err = json.Unmarshal([]byte(m.Body),&paramsData); err != nil{
-			// 	req.JsonErr = err.Error()
-			// 	req.JsonErrBody = string(m.Body)
-			// }else{
-			// 	paramValue := url.Values{}
-			// 	for key,value := range paramsData{
-			// 		paramValue.Add(key,value)
-			// 	}
-			// 	req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, &paramValue)
-			// }
+	if f.restChannel.Method=="GET"{
+		req.ResponseCode, req.ResponseData, requestErr = f.PublishGet(f.restChannel.RestUrl, m.Body)
+	} else if f.restChannel.Method=="POST"{
+		if contentType=="application/x-www-form-urlencoded" {
+			paramsData := map[string]string{}
+			if err := json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
+				req.JsonErr = err.Error()
+				req.JsonErrBody = string(req.MsgData)
+			}else{
+				paramValue := url.Values{}
+				for key,value := range paramsData{
+					paramValue.Add(key,value)
+				}
+				req.ResponseCode, req.ResponseData, requestErr = f.PublishPostForm(f.restChannel.RestUrl, &paramValue)
+			}
+		}else{
 			req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, f.restChannel.ContentType, &paramValue)
-		}
 
-		if requestErr != nil{
-			req.ResponseErr = requestErr.Error()
 		}
+	}
+
+	if requestErr != nil{
+		req.ResponseErr = requestErr.Error()
 	}
 	
 	req.MessageID = fmt.Sprintf("%s", m.ID)
@@ -167,8 +160,9 @@ type request struct{
 	JsonErrBody string
 }
 
-func (p *RequestWorker) PublishPost(addr string, contentType string, params *url.Values) (code int, response string, err error) {
+func (p *RequestWorker) PublishPostForm(addr string,  params *url.Values) (code int, response string, err error) {
 	buf := strings.NewReader(params.Encode())	
+	contentType := "application/x-www-form-urlencoded"
 	resp, err2 := HTTPPost(addr, contentType, buf)
 	if err2 != nil {
 		return code, response, err2
@@ -184,9 +178,40 @@ func (p *RequestWorker) PublishPost(addr string, contentType string, params *url
 	return resp.StatusCode, string(respByte), err
 }
 
-func (p *RequestWorker) PublishGet(addr string, params *url.Values) (code int, response string, err error)  {
+func (p *RequestWorker) PublishPost(addr string, contentType string, msg []byte) (code int, response string, err error) {
+	buf := bytes.NewBuffer(msg)
+
+	resp, err2 := HTTPPost(addr, contentType, buf)
+	if err2 != nil {
+		return code, response, err2
+	}
+	//io.Copy(ioutil.Discard, resp.Body)
+	var respByte []byte
+	respByte, err = io.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		p.logf(lg.ERROR, "got status code %d", resp.StatusCode)
+	}
+	return resp.StatusCode, string(respByte), err
+}
+
+func (p *RequestWorker) PublishGet(addr string, msgBody []byte) (code int, response string, err error)  {
 	endpoint := addr
-	msg := params.Encode()
+	var msg string
+	if json.Valid(msgBody){
+        paramsData := map[string]string{}
+        
+        json.Unmarshal(msgBody,&paramsData)
+        paramValue := url.Values{}
+
+        for key,value := range paramsData{
+            paramValue.Add(key,value)
+        }
+        msg = paramValue.Encode()
+    }else{
+        msg = url.QueryEscape(string(msgBody))
+    }
 
 	if strings.Contains(addr, "?"){
 		endpoint = fmt.Sprintf("%s&%s", addr, msg)
