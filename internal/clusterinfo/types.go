@@ -312,5 +312,6 @@ type RestChannel struct{
 	Channel string `db:"channel" json:"channel"`
 	Method string `db:"method" json:"method"`
 	RestUrl string `db:"rest_url" json:"rest_url"`
+	ContentType string `db:"content_type" json:"content_type"`
 	CreateAt time.Time `db:"created_at" json:"created_at"`
 }

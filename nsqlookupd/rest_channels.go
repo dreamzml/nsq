@@ -18,7 +18,7 @@ func (s *httpServer) doRestChannels(w http.ResponseWriter, req *http.Request, ps
 	}
 	
 	//查询
-	sql := "SELECT id,topic,channel,method,rest_url,created_at FROM rest_channels WHERE is_deleted=:is_deleted limit :limit offset :offset"
+	sql := "SELECT id,topic,channel,method,rest_url,content_type,created_at FROM rest_channels WHERE is_deleted=:is_deleted limit :limit offset :offset"
 	nstmt, err := dao.MDB.PrepareNamed(sql)
 	if err != nil {
 		fmt.Println(err)

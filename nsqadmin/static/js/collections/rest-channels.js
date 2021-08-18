@@ -21,7 +21,14 @@ var RestChannels = Backbone.Collection.extend({
     parse: function(resp) {
         var RestChannels = _.map(resp['restChannels'], function(item) {
             var createTime = new Date(item.created_at).format("yyyy-MM-dd hh:mm")
-            return {"id": item.ID,"topic": item.topic, "channel":item.channel, "method":item.method, "rest_url":item.rest_url, "create_at":createTime};
+            return {
+                "id": item.ID,
+                "topic": item.topic, 
+                "channel":item.channel, 
+                "method":item.method, 
+                "rest_url":item.rest_url, 
+                'content_type': item.content_type,
+                "create_at":createTime};
         });
         return RestChannels;
     }

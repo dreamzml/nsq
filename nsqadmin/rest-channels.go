@@ -27,7 +27,7 @@ func (s *httpServer) restChannelsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	
 	//查询
-	sql := "SELECT id,topic,channel,method,rest_url,created_at FROM rest_channels WHERE is_deleted=:is_deleted limit :limit offset :offset"
+	sql := "SELECT id,topic,channel,method,rest_url,content_type,created_at FROM rest_channels WHERE is_deleted=:is_deleted limit :limit offset :offset"
 	nstmt, err := dao.MDB.PrepareNamed(sql)
 	if err != nil {
 		fmt.Println(err)
@@ -83,7 +83,7 @@ func (s *httpServer) createRestChannelHandler(w http.ResponseWriter, req *http.R
 	if len(body.Channel) > 0 {
 		s.notifyAdminAction("create_channel", body.Topic, body.Channel, "", req)
 	}
-	sql := "INSERT INTO rest_channels (`topic`, `channel`, `method`, rest_url, created_at) VALUES (:topic, :channel, :method, :rest_url, :created_at)"
+	sql := "INSERT INTO rest_channels (`topic`, `channel`, `method`, rest_url, content_type, created_at) VALUES (:topic, :channel, :method, :rest_url, :content_type, :created_at)"
 	if result, err := dao.MDB.NamedExec(sql, body); err != nil{
 		fmt.Println("insert error", err)
 		messages = append(messages, err.Error())
@@ -107,7 +107,7 @@ func (s *httpServer) deleteRestChannelHandler(w http.ResponseWriter, req *http.R
 	var channel clusterinfo.RestChannel
 	id := ps.ByName("id")
 
-	if err := dao.MDB.Get(&channel, "SELECT id,topic,channel,method,rest_url,created_at FROM rest_channels WHERE id=? LIMIT 1;", id); err !=nil{
+	if err := dao.MDB.Get(&channel, "SELECT id,topic,channel,method,rest_url,content_type,created_at FROM rest_channels WHERE id=? LIMIT 1;", id); err !=nil{
 		s.nsqadmin.logf(LOG_ERROR, "not fond delete record, id: %d, error:  %s",id, err)
 		return nil, http_api.Err{502, fmt.Sprintf("not fond record: %s", err)}
 	}
