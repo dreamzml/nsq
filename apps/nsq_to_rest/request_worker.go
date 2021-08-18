@@ -34,7 +34,7 @@ type RequestWorker struct {
 	rev      	uint
 }
 
-func NewRequestWorker(logf lg.AppLogFunc, opts *Options, restChannel *clusterinfo.RestChannel, cfg *nsq.Config, ci *clusterinfo.ClusterInfo) (*RequestWorker, error) {
+func NewRequestWorker(logf lg.AppLogFunc, opts *Options, restChannel clusterinfo.RestChannel, cfg *nsq.Config, ci *clusterinfo.ClusterInfo) (*RequestWorker, error) {
 	consumer, err := nsq.NewConsumer(restChannel.Topic, restChannel.Channel, cfg)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func NewRequestWorker(logf lg.AppLogFunc, opts *Options, restChannel *clusterinf
 	f := &RequestWorker{
 		logf:           logf,
 		opts:           opts,
-		restChannel:    restChannel,
+		restChannel:    &restChannel,
 		consumer:       consumer,
 		ci:             ci,
 		logChan:        make(chan *nsq.Message, 1),

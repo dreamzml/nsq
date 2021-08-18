@@ -48,7 +48,7 @@ func (t *TopicDiscoverer) updateTopics(restChannels map[string]clusterinfo.RestC
 		// 	t.logf(lg.WARN, "skipping topic %s (doesn't match pattern %s)", topic, t.opts.TopicPattern)
 		// 	continue
 		// }
-		fl, err := NewRequestWorker(t.logf, t.opts, &rest, t.cfg, t.ci)
+		fl, err := NewRequestWorker(t.logf, t.opts, rest, t.cfg, t.ci)
 		if err != nil {
 			t.logf(lg.ERROR, "couldn't create NewRequestWorker for new topic %s: %s", key, err)
 			continue
