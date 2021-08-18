@@ -9,7 +9,7 @@ import (
 	"strings"
 	"math/rand"
 	//"errors"
-	//"bytes"
+	"bytes"
 	"net/url"
 	"github.com/nsqio/go-nsq"
 	"github.com/nsqio/nsq/internal/lg"
@@ -106,7 +106,7 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 	if f.restChannel.Method=="GET"{
 		req.ResponseCode, req.ResponseData, requestErr = f.PublishGet(f.restChannel.RestUrl, m.Body)
 	} else if f.restChannel.Method=="POST"{
-		if contentType=="application/x-www-form-urlencoded" {
+		if f.restChannel.ContentType=="application/x-www-form-urlencoded" {
 			paramsData := map[string]string{}
 			if err := json.Unmarshal([]byte(req.MsgData),&paramsData); err != nil{
 				req.JsonErr = err.Error()
@@ -119,7 +119,7 @@ func (f *RequestWorker) HandleMessage(m *nsq.Message) error {
 				req.ResponseCode, req.ResponseData, requestErr = f.PublishPostForm(f.restChannel.RestUrl, &paramValue)
 			}
 		}else{
-			req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, f.restChannel.ContentType, &paramValue)
+			req.ResponseCode, req.ResponseData, requestErr = f.PublishPost(f.restChannel.RestUrl, f.restChannel.ContentType, m.Body)
 
 		}
 	}
